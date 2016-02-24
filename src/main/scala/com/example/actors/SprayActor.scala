@@ -1,11 +1,13 @@
 package com.example.actors
 
 import akka.actor.Actor
+import com.trueconnectivity.mandrill.MandrillWebhookService
+import com.typesafe.config.{ConfigFactory, Config}
+import spray.http.MediaTypes._
 import spray.routing._
-import spray.http._
-import MediaTypes._
 
-class SprayActor extends Actor with DefaultService {
+class SprayActor extends Actor with DefaultService with MandrillWebhookService {
+  val config = ConfigFactory.load()
   def actorRefFactory = context
   def receive = runRoute(defaultRoute)
 }
@@ -18,7 +20,7 @@ trait DefaultService extends HttpService {
           complete {
             <html>
               <body>
-                <h1>Say hello to <i>spray-routing</i> on <i>spray-can</i>!</h1>
+                <h1>Fuck you <i>Dave</i>!</h1>
               </body>
             </html>
           }
