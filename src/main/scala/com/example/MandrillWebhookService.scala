@@ -6,6 +6,7 @@ import javax.crypto.spec.SecretKeySpec
 
 import com.typesafe.config.Config
 import shapeless._
+import spray.http.FormData
 import spray.httpx.SprayJsonSupport
 import spray.json.{DefaultJsonProtocol, JsonParser, JsonReader, RootJsonFormat}
 import spray.routing._
