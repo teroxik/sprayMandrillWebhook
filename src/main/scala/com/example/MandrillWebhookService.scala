@@ -51,11 +51,11 @@ trait MandrillWebhookService extends HttpService with DefaultJsonProtocol with S
     val sha1encrypted = mac.doFinal(signedData.getBytes)
 
     //Comparing the base64 encoding of that with the signature passed in the header
-    val base64encoded = Base64.getEncoder.encode(sha1encrypted)
+    val base64encoded = Base64.getEncoder.encodeToString(sha1encrypted)
     println(s"generated $base64encoded")
     println(s"signature $signature")
 
-    new String(base64encoded, StandardCharsets.UTF_8) == signature
+    base64encoded == signature
   }
 
   /**
