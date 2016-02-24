@@ -63,7 +63,7 @@ trait MandrillWebhookService extends HttpService with DefaultJsonProtocol with S
   def mandrillAuthenticated[T](reader : JsonReader[T]) : Directive1[T] = {
     formField(mandrillParamKey).flatMap[T :: HNil] { paramValue =>
       headerValueByName(headerSignatureKey).flatMap[T :: HNil]{ signature =>
-        if (authenticate(signature, paramValue)) {println(paramValue) ; provide(JsonParser.apply(paramValue).convertTo[T](reader))}
+        if (authenticate(signature, paramValue)) {println("RAW PARAM " + paramValue) ; provide(JsonParser.apply(paramValue).convertTo[T](reader))}
         else reject(AuthorizationFailedRejection)
       } & cancelAllRejections(ofType[AuthorizationFailedRejection.type])
     }
@@ -72,7 +72,7 @@ trait MandrillWebhookService extends HttpService with DefaultJsonProtocol with S
 
   val mandrillRoute = path("email") {
     post {
-      mandrillAuthenticated(jsonReaderFor[MEvent]){ mevent =>
+      mandrillAuthenticated(jsonReaderFor[List[MEvent]]){ mevent =>
         complete {
           println("OOOOH YEAH " + mevent)
           "Cool"
