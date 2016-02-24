@@ -49,6 +49,9 @@ trait MandrillWebhookService extends HttpService with DefaultJsonProtocol with S
 
     //Comparing the base64 encoding of that with the signature passed in the header
     val base64encoded = Base64.getEncoder.encodeToString(sha1encrypted)
+    println(s"generated $base64encoded")
+    println(s"signature $signature")
+
     base64encoded == signature
   }
 
@@ -70,6 +73,7 @@ trait MandrillWebhookService extends HttpService with DefaultJsonProtocol with S
       mandrillAuthentication{
         entity(as[MEvent]) { mevent ⇒
           complete {
+            println("OOOOH YEAH " + mevent)
             "Cool"
           }
         }
