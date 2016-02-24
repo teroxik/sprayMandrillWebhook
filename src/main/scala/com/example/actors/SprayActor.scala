@@ -9,7 +9,7 @@ import spray.routing._
 class SprayActor extends Actor with DefaultService with MandrillWebhookService {
   val config = ConfigFactory.load()
   def actorRefFactory = context
-  def receive = runRoute(defaultRoute)
+  def receive = runRoute(defaultRoute ~ mandrillRoute)
 }
 
 trait DefaultService extends HttpService {
