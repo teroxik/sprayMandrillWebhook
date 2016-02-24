@@ -40,7 +40,7 @@ trait MandrillWebhookService extends HttpService with DefaultJsonProtocol with S
     val url = config.getString(webhookAddressKey)
     val webhookKey = config.getString(webhookAuthenticationKeyKey)
     val sortedParams = parameters.sortBy{case (key, value) => key}
-    prinltn(sortedParams)
+    println(sortedParams)
     val signedData = url + sortedParams.map{case (key, value) => key + value}.mkString
     println(signedData) 
     //Encoding the signedData using HmacSha1
