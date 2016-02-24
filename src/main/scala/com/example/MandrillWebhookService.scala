@@ -71,7 +71,7 @@ trait MandrillWebhookService extends HttpService with DefaultJsonProtocol with S
   val mandrillRoute = path("email") {
     post {
       mandrillAuthentication{
-        entity(as[MEvent]) { mevent ⇒
+        entity(as[FormData]) { mevent ⇒
           complete {
             println("OOOOH YEAH " + mevent)
             "Cool"
