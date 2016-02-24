@@ -1,6 +1,5 @@
 package com.trueconnectivity.mandrill
 
-import java.nio.charset.StandardCharsets
 import java.util.Base64
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
@@ -8,7 +7,7 @@ import javax.crypto.spec.SecretKeySpec
 import com.typesafe.config.Config
 import shapeless._
 import spray.httpx.SprayJsonSupport
-import spray.json.{DefaultJsonProtocol, RootJsonFormat}
+import spray.json.{DefaultJsonProtocol, JsonParser, JsonReader, RootJsonFormat}
 import spray.routing._
 
 object MandrillWebhookService {
@@ -55,13 +54,15 @@ trait MandrillWebhookService extends HttpService with DefaultJsonProtocol with S
     base64encoded == signature
   }
 
+  def jsonReaderFor[T](implicit reader : JsonReader[T]) : JsonReader[T] = reader
+
   /**
    * Custom directive that checks the generated signature of the request with the one passed in the header.
    */
-  def mandrillAuthentication : Directive0 = {
-    formField(mandrillParamKey).flatMap[HNil] { paramValue =>
-      headerValueByName(headerSignatureKey).flatMap[HNil]{ signature =>
-        if (authenticate(signature, paramValue)) pass
+  def mandrillAuthenticated[T](reader : JsonReader[T]) : Directive1[T] = {
+    formField(mandrillParamKey).flatMap[T :: HNil] { paramValue =>
+      headerValueByName(headerSignatureKey).flatMap[T :: HNil]{ signature =>
+        if (authenticate(signature, paramValue)) provide(JsonParser.apply(paramValue).convertTo[T](reader))
         else reject(AuthorizationFailedRejection)
       } & cancelAllRejections(ofType[AuthorizationFailedRejection.type])
     }
@@ -70,12 +71,10 @@ trait MandrillWebhookService extends HttpService with DefaultJsonProtocol with S
 
   val mandrillRoute = path("email") {
     post {
-      mandrillAuthentication{
-        entity(as[MEvent]) { mevent ⇒
-          complete {
-            println("OOOOH YEAH " + mevent)
-            "Cool"
-          }
+      mandrillAuthenticated(jsonReaderFor[MEvent]){ mevent =>
+        complete {
+          println("OOOOH YEAH " + mevent)
+          "Cool"
         }
       }
     } ~
