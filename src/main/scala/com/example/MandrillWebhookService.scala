@@ -63,7 +63,7 @@ trait MandrillWebhookService extends HttpService with DefaultJsonProtocol with S
   def mandrillAuthenticated[T](reader : JsonReader[T]) : Directive1[T] = {
     formField(mandrillParamKey).flatMap[T :: HNil] { paramValue =>
       headerValueByName(headerSignatureKey).flatMap[T :: HNil]{ signature =>
-        if (authenticate(signature, paramValue)) provide(JsonParser.apply(paramValue).convertTo[T](reader))
+        if (authenticate(signature, paramValue)) {println(paramValue) ; provide(JsonParser.apply(paramValue).convertTo[T](reader))}
         else reject(AuthorizationFailedRejection)
       } & cancelAllRejections(ofType[AuthorizationFailedRejection.type])
     }
