@@ -16,6 +16,7 @@ object MandrillWebhookService {
   val webhookAuthenticationKeyKey = "mandrill.webhook.authKey"
   val headerSignatureKey = "X-Mandrill-Signature"
   val hmacsha1Key = "HmacSHA1"
+  val mandrillParamKey = "mandrill_events"
 }
 
 case class MEvent(msg : MMsg)
@@ -34,15 +35,12 @@ trait MandrillWebhookService extends HttpService with DefaultJsonProtocol with S
 
   /**
    * Implementation of the mandrill authentication signature check
-   * @param parameters the http request parameters
    */
-  def authenticate(signature : String, parameters : Seq[(String, String)]) : Boolean = {
+  def authenticate(signature : String, paramRaw : String) : Boolean = {
     val url = config.getString(webhookAddressKey)
     val webhookKey = config.getString(webhookAuthenticationKeyKey)
-    val sortedParams = parameters.sortBy{case (key, value) => key}
-    println(sortedParams)
-    val signedData = url + sortedParams.map{case (key, value) => key + value}.mkString
-    println(signedData) 
+    val signedData = url + mandrillParamKey + paramRaw
+    println(signedData)
     //Encoding the signedData using HmacSha1
     val secret = new SecretKeySpec(webhookKey.getBytes, hmacsha1Key)
     val mac = Mac.getInstance(hmacsha1Key)
@@ -61,9 +59,9 @@ trait MandrillWebhookService extends HttpService with DefaultJsonProtocol with S
    * Custom directive that checks the generated signature of the request with the one passed in the header.
    */
   def mandrillAuthentication : Directive0 = {
-    parameterSeq.flatMap[HNil] { seq =>
+    parameter(mandrillParamKey).flatMap[HNil] { paramValue =>
       headerValueByName(headerSignatureKey).flatMap[HNil]{ signature =>
-        if (authenticate(signature, seq)) pass
+        if (authenticate(signature, paramValue)) pass
         else reject(AuthorizationFailedRejection)
       } & cancelAllRejections(ofType[AuthorizationFailedRejection.type])
     }
