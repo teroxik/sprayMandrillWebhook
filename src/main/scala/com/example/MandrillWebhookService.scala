@@ -62,7 +62,7 @@ trait MandrillWebhookService extends HttpService with DefaultJsonProtocol with S
    * Custom directive that checks the generated signature of the request with the one passed in the header.
    */
   def mandrillAuthentication : Directive0 = {
-    parameterSeq.flatMap[HNil] { seq =>
+    parameterSeq.flatMap { seq =>
       headerValueByName(headerSignatureKey).flatMap[HNil]{ signature =>
         if (authenticate(signature, seq)) pass
         else reject(AuthorizationFailedRejection)
