@@ -88,6 +88,7 @@ trait MandrillWebhookService extends HttpService with DefaultJsonProtocol with S
     } yield {
       (orderId, itemId, result)
     }
+  }
 
   val mandrillRoute = path("email") {
     post {
