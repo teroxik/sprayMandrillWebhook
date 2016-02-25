@@ -18,6 +18,7 @@ libraryDependencies ++= {
     "io.spray"            %% "spray-json"     % sprayVersion,
     "com.typesafe.akka"   %%  "akka-actor"    % akkaVersion,
     "com.typesafe.akka"   %%  "akka-testkit"  % akkaVersion   % "test",
-    "org.specs2"          %%  "specs2-core"   % "2.3.11" % "test"
+    "org.specs2"          %%  "specs2-core"   % "2.3.11" % "test",
+    "com.github.tototoshi" %% "scala-csv"     % "1.3.0"
   )
 }
