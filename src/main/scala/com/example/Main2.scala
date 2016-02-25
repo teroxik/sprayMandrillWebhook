@@ -2,7 +2,7 @@ import com.trueconnectivity.mandrill.{MAttachment, MEvent, MMsg}
 import spray.httpx.SprayJsonSupport
 import spray.json.{JsonParser, DefaultJsonProtocol, RootJsonFormat}
 
-object Main2 extends App with DefaultJsonProtocol with SprayJsonSupport {
+object Main2 extends DefaultJsonProtocol with SprayJsonSupport {
 
   val string =
     """
